@@ -1,0 +1,12 @@
+services:
+  backend:
+    build: .
+    image: ozanemrahyakupoglu/may-backend:${VERSION:-1.0.0}
+    container_name: may-backend
+    ports:
+      - "8090:8090"
+    environment:
+      DB_HOST: host.docker.internal
+      DB_PORT: 5432
+      DB_USER: MAY_APP
+      DB_PASSWORD: MAY_APP

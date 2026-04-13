@@ -1,14 +1,38 @@
-# Docker Commands - clinic-service
+# Docker Commands - may-backend
 
 ## Build
-docker build -t ozanemrahyakupoglu/clinic-service:1.0.1 .
+docker build -t ozanemrahyakupoglu/may-backend:1.0.0 .
 
 ## Push (Docker Hub)
-docker push ozanemrahyakupoglu/clinic-service:1.0.1
+docker push ozanemrahyakupoglu/may-backend:1.0.0
 
 ## Run
 docker run -d \
-  --name clinic-service \
+  --name may-backend \
   -p 8090:8090 \
-  -e DB_PASSWORD=clinic_app \
-  ozanemrahyakupoglu/clinic-service:1.0.1
+  -e DB_HOST=host.docker.internal \
+  -e DB_USER=MAY_APP \
+  -e DB_PASSWORD=MAY_APP \
+  ozanemrahyakupoglu/may-backend:1.0.0
+
+---
+
+# Docker Compose Commands - may-backend
+
+## Build
+docker compose build
+
+## Build (with version)
+VERSION=1.0.1 docker compose build
+
+## Push (Docker Hub)
+docker compose push
+
+## Push (with version)
+VERSION=1.0.1 docker compose push
+
+## Run
+docker compose up -d
+
+## Run (with version)
+VERSION=1.0.1 docker compose up -d
