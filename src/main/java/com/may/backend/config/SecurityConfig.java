@@ -50,9 +50,16 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(
-                "http://localhost:3000",
-                "http://localhost:5173",
-                "http://localhost:5174"
+                "http://localhost:7002",
+                "http://localhost:7003",
+                "http://46.225.97.71:7002",
+                "https://46.225.97.71:7002",
+                "http://46.225.97.71:7003",
+                "https://46.225.97.71:7003",
+                "http://may-mobile.onbtech.com",
+                "https://may-mobile.onbtech.com",
+                "http://may-web.onbtech.com",
+                "https://may-web.onbtech.com"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
