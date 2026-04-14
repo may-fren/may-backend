@@ -1,11 +1,11 @@
 server:
-  port: 8090
+  port: 7001
 
 spring:
   application:
     name: may-backend
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/postgres?currentSchema=MAY
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/postgres?currentSchema=may
     username: ${DB_USER:MAY_APP}
     password: ${DB_PASSWORD:MAY_APP}
     driver-class-name: org.postgresql.Driver
