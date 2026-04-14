@@ -8,5 +8,5 @@ services:
     environment:
       DB_HOST: 46.225.97.71
       DB_PORT: 7000
-      DB_USER: MAY_APP
+      DB_USER: may_app
       DB_PASSWORD: 123456789
