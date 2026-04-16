@@ -22,6 +22,17 @@ import java.util.Map;
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+    @ExceptionHandler(SessionLimitException.class)
+    public ProblemDetail handleSessionLimitException(SessionLimitException ex, HttpServletRequest request) {
+        log.warn("Session limit reached: {}", ex.getMessage());
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(ex.getHttpStatus(), ex.getMessage());
+        problemDetail.setTitle(ex.getErrorCode().getMessage());
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
+        problemDetail.setProperty("code", ex.getErrorCode().getCode());
+        problemDetail.setProperty("activeSessions", ex.getActiveSessions());
+        return problemDetail;
+    }
+
     @ExceptionHandler(BusinessException.class)
     public ProblemDetail handleBusinessException(BusinessException ex, HttpServletRequest request) {
         log.warn("Business exception: code={}, message={}", ex.getErrorCode().getCode(), ex.getMessage());

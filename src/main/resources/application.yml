@@ -33,6 +33,15 @@ jwt:
   secret: ${JWT_SECRET:5rDmTtqp7KKanOl22OzBh6lC509zs1uuoLoiJkf97gAveb3m1s8SvRn1ugaxvbSm+lwCEn3FG7oRp9JXv58/Dg==}
   access-token-expiration: 3600000
   refresh-token-expiration: 604800000
+  platform:
+    web:
+      access-token-expiration: 3600000
+      refresh-token-expiration: 604800000
+      max-sessions: 1
+    mobile:
+      access-token-expiration: 3600000
+      refresh-token-expiration: 2592000000
+      max-sessions: 1
 
 management:
   endpoints:

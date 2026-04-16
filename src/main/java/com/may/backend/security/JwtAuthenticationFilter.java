@@ -1,5 +1,6 @@
 package com.may.backend.security;
 
+import com.may.backend.enums.PlatformType;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,6 +40,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             SecurityContextHolder.getContext().setAuthentication(authToken);
+
+            try {
+                PlatformType platform = jwtTokenProvider.getPlatformFromToken(token);
+                request.setAttribute("platform", platform);
+            } catch (Exception ignored) {
+            }
         }
 
         filterChain.doFilter(request, response);
