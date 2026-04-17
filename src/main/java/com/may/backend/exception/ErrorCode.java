@@ -16,7 +16,8 @@ public enum ErrorCode {
     SESSION_LIMIT_REACHED(1007, "Oturum limiti aşıldı"),
     SESSION_NOT_FOUND(1008, "Oturum bulunamadı"),
     INVALID_REFRESH_TOKEN(1009, "Geçersiz yenileme tokeni"),
-    INVALID_PLATFORM(1010, "Geçersiz platform bilgisi");
+    INVALID_PLATFORM(1010, "Geçersiz platform bilgisi"),
+    AUTHENTICATION_FAILED(1011, "Kimlik doğrulama hatası");
 
     private final int code;
     private final String message;
