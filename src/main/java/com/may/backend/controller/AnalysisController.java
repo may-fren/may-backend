@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/analyses")
@@ -35,14 +35,9 @@ public class AnalysisController {
     @GetMapping
     @PreAuthorize("hasAuthority('ANALYSIS_READ')")
     public ResponseEntity<Page<AnalysisResponse>> getAll(
+            @RequestParam Map<String, String> filters,
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(analysisService.getAll(pageable));
-    }
-
-    @GetMapping("/module/{moduleId}")
-    @PreAuthorize("hasAuthority('ANALYSIS_READ')")
-    public ResponseEntity<List<AnalysisResponse>> getByModuleId(@PathVariable Long moduleId) {
-        return ResponseEntity.ok(analysisService.getByModuleId(moduleId));
+        return ResponseEntity.ok(analysisService.getAll(filters, pageable));
     }
 
     @PostMapping

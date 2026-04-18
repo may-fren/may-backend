@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/v1/roles")
 @RequiredArgsConstructor
@@ -33,8 +35,9 @@ public class RoleController {
     @GetMapping
     @PreAuthorize("hasAuthority('ROLES_READ')")
     public ResponseEntity<Page<RoleResponse>> getAll(
+            @RequestParam Map<String, String> filters,
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(roleService.getAll(pageable));
+        return ResponseEntity.ok(roleService.getAll(filters, pageable));
     }
 
     @PostMapping

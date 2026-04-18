@@ -2,10 +2,11 @@ package com.may.backend.repository;
 
 import com.may.backend.entity.UserRoleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
 
-public interface UserRoleRepository extends JpaRepository<UserRoleEntity, Long> {
+public interface UserRoleRepository extends JpaRepository<UserRoleEntity, Long>, JpaSpecificationExecutor<UserRoleEntity> {
 
     List<UserRoleEntity> findAllByUser_Id(Long userId);
 

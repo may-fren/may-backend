@@ -9,16 +9,18 @@ import com.may.backend.exception.BusinessException;
 import com.may.backend.exception.ErrorCode;
 import com.may.backend.mapper.AnalysisMapper;
 import com.may.backend.repository.AnalysisRepository;
+import com.may.backend.specification.GenericSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -36,17 +38,10 @@ public class AnalysisService {
     }
 
     @Transactional(readOnly = true)
-    public Page<AnalysisResponse> getAll(Pageable pageable) {
-        log.info("Analizler listeleniyor.");
-        return analysisRepository.findAll(pageable).map(analysisMapper::toResponse);
-    }
-
-    @Transactional(readOnly = true)
-    public List<AnalysisResponse> getByModuleId(Long moduleId) {
-        log.info("Modüle göre analizler listeleniyor. moduleId: {}", moduleId);
-        return analysisRepository.findAllByModule_Id(moduleId).stream()
-                .map(analysisMapper::toResponse)
-                .toList();
+    public Page<AnalysisResponse> getAll(Map<String, String> filters, Pageable pageable) {
+        log.info("Analizler listeleniyor. filters: {}", filters);
+        Specification<AnalysisEntity> spec = GenericSpecification.build(AnalysisEntity.class, filters);
+        return analysisRepository.findAll(spec, pageable).map(analysisMapper::toResponse);
     }
 
     @Transactional

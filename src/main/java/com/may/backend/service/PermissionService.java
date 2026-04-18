@@ -8,16 +8,18 @@ import com.may.backend.exception.BusinessException;
 import com.may.backend.exception.ErrorCode;
 import com.may.backend.mapper.PermissionMapper;
 import com.may.backend.repository.PermissionRepository;
+import com.may.backend.specification.GenericSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -34,17 +36,10 @@ public class PermissionService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PermissionResponse> getAll(Pageable pageable) {
-        log.info("İzinler listeleniyor.");
-        return permissionRepository.findAll(pageable).map(permissionMapper::toResponse);
-    }
-
-    @Transactional(readOnly = true)
-    public List<PermissionResponse> getByModule(String module) {
-        log.info("Modüle göre izinler listeleniyor. module: {}", module);
-        return permissionRepository.findAllByModule(module).stream()
-                .map(permissionMapper::toResponse)
-                .toList();
+    public Page<PermissionResponse> getAll(Map<String, String> filters, Pageable pageable) {
+        log.info("İzinler listeleniyor. filters: {}", filters);
+        Specification<PermissionEntity> spec = GenericSpecification.build(PermissionEntity.class, filters);
+        return permissionRepository.findAll(spec, pageable).map(permissionMapper::toResponse);
     }
 
     @Transactional

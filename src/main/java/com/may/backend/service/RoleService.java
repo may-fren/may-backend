@@ -8,15 +8,18 @@ import com.may.backend.exception.BusinessException;
 import com.may.backend.exception.ErrorCode;
 import com.may.backend.mapper.RoleMapper;
 import com.may.backend.repository.RoleRepository;
+import com.may.backend.specification.GenericSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -33,9 +36,10 @@ public class RoleService {
     }
 
     @Transactional(readOnly = true)
-    public Page<RoleResponse> getAll(Pageable pageable) {
-        log.info("Roller listeleniyor.");
-        return roleRepository.findAll(pageable).map(roleMapper::toResponse);
+    public Page<RoleResponse> getAll(Map<String, String> filters, Pageable pageable) {
+        log.info("Roller listeleniyor. filters: {}", filters);
+        Specification<RoleEntity> spec = GenericSpecification.build(RoleEntity.class, filters);
+        return roleRepository.findAll(spec, pageable).map(roleMapper::toResponse);
     }
 
     @Transactional

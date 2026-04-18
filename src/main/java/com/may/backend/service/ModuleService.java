@@ -8,15 +8,18 @@ import com.may.backend.exception.BusinessException;
 import com.may.backend.exception.ErrorCode;
 import com.may.backend.mapper.ModuleMapper;
 import com.may.backend.repository.ModuleRepository;
+import com.may.backend.specification.GenericSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -33,9 +36,10 @@ public class ModuleService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ModuleResponse> getAll(Pageable pageable) {
-        log.info("Modüller listeleniyor.");
-        return moduleRepository.findAll(pageable).map(moduleMapper::toResponse);
+    public Page<ModuleResponse> getAll(Map<String, String> filters, Pageable pageable) {
+        log.info("Modüller listeleniyor. filters: {}", filters);
+        Specification<ModuleEntity> spec = GenericSpecification.build(ModuleEntity.class, filters);
+        return moduleRepository.findAll(spec, pageable).map(moduleMapper::toResponse);
     }
 
     @Transactional

@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/v1/modules")
 @RequiredArgsConstructor
@@ -33,8 +35,9 @@ public class ModuleController {
     @GetMapping
     @PreAuthorize("hasAuthority('MODULE_READ')")
     public ResponseEntity<Page<ModuleResponse>> getAll(
+            @RequestParam Map<String, String> filters,
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(moduleService.getAll(pageable));
+        return ResponseEntity.ok(moduleService.getAll(filters, pageable));
     }
 
     @PostMapping

@@ -10,14 +10,18 @@ import com.may.backend.exception.ErrorCode;
 import com.may.backend.mapper.UserRoleMapper;
 import com.may.backend.repository.UserRepository;
 import com.may.backend.repository.UserRoleRepository;
+import com.may.backend.specification.GenericSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -30,19 +34,19 @@ public class UserRoleService {
     private final UserRoleMapper userRoleMapper;
 
     @Transactional(readOnly = true)
-    public List<UserRoleResponse> getByUserId(Long userId) {
-        log.info("Kullanıcı rolleri getiriliyor. userId: {}", userId);
-        return userRoleRepository.findAllByUser_Id(userId).stream()
-                .map(userRoleMapper::toResponse)
-                .toList();
+    public Page<UserRoleResponse> getByUserId(Long userId, Map<String, String> filters, Pageable pageable) {
+        log.info("Kullanıcı rolleri getiriliyor. userId: {}, filters: {}", userId, filters);
+        filters.put("userId", userId.toString());
+        Specification<UserRoleEntity> spec = GenericSpecification.build(UserRoleEntity.class, filters);
+        return userRoleRepository.findAll(spec, pageable).map(userRoleMapper::toResponse);
     }
 
     @Transactional(readOnly = true)
-    public List<UserRoleResponse> getByRoleId(Long roleId) {
-        log.info("Role atanmış kullanıcılar getiriliyor. roleId: {}", roleId);
-        return userRoleRepository.findAllByRole_Id(roleId).stream()
-                .map(userRoleMapper::toResponse)
-                .toList();
+    public Page<UserRoleResponse> getByRoleId(Long roleId, Map<String, String> filters, Pageable pageable) {
+        log.info("Role atanmış kullanıcılar getiriliyor. roleId: {}, filters: {}", roleId, filters);
+        filters.put("roleId", roleId.toString());
+        Specification<UserRoleEntity> spec = GenericSpecification.build(UserRoleEntity.class, filters);
+        return userRoleRepository.findAll(spec, pageable).map(userRoleMapper::toResponse);
     }
 
     @Transactional

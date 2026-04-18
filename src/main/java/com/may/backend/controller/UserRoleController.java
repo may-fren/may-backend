@@ -7,12 +7,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/user-roles")
@@ -24,14 +27,20 @@ public class UserRoleController {
 
     @GetMapping("/user/{userId}")
     @PreAuthorize("hasAuthority('USER_READ')")
-    public ResponseEntity<List<UserRoleResponse>> getByUserId(@PathVariable Long userId) {
-        return ResponseEntity.ok(userRoleService.getByUserId(userId));
+    public ResponseEntity<Page<UserRoleResponse>> getByUserId(
+            @PathVariable Long userId,
+            @RequestParam Map<String, String> filters,
+            @PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(userRoleService.getByUserId(userId, filters, pageable));
     }
 
     @GetMapping("/role/{roleId}")
     @PreAuthorize("hasAuthority('ROLES_READ')")
-    public ResponseEntity<List<UserRoleResponse>> getByRoleId(@PathVariable Long roleId) {
-        return ResponseEntity.ok(userRoleService.getByRoleId(roleId));
+    public ResponseEntity<Page<UserRoleResponse>> getByRoleId(
+            @PathVariable Long roleId,
+            @RequestParam Map<String, String> filters,
+            @PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(userRoleService.getByRoleId(roleId, filters, pageable));
     }
 
     @PostMapping

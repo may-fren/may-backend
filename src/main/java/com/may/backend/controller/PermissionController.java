@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/permissions")
@@ -35,14 +35,9 @@ public class PermissionController {
     @GetMapping
     @PreAuthorize("hasAuthority('PERMISSION_READ')")
     public ResponseEntity<Page<PermissionResponse>> getAll(
+            @RequestParam Map<String, String> filters,
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(permissionService.getAll(pageable));
-    }
-
-    @GetMapping("/module/{module}")
-    @PreAuthorize("hasAuthority('PERMISSION_READ')")
-    public ResponseEntity<List<PermissionResponse>> getByModule(@PathVariable String module) {
-        return ResponseEntity.ok(permissionService.getByModule(module));
+        return ResponseEntity.ok(permissionService.getAll(filters, pageable));
     }
 
     @PostMapping

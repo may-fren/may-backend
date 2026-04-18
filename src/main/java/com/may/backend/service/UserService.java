@@ -9,16 +9,19 @@ import com.may.backend.exception.BusinessException;
 import com.may.backend.exception.ErrorCode;
 import com.may.backend.mapper.UserMapper;
 import com.may.backend.repository.UserRepository;
+import com.may.backend.specification.GenericSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -36,15 +39,10 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Page<UserResponse> getAll(Pageable pageable) {
-        log.info("Kullanıcılar listeleniyor.");
-        return userRepository.findAll(pageable).map(userMapper::toResponse);
-    }
-
-    @Transactional(readOnly = true)
-    public Page<UserResponse> getAllByStatus(Status status, Pageable pageable) {
-        log.info("Kullanıcılar status'a göre listeleniyor. status: {}", status);
-        return userRepository.findAllByStatus(status, pageable).map(userMapper::toResponse);
+    public Page<UserResponse> getAll(Map<String, String> filters, Pageable pageable) {
+        log.info("Kullanıcılar listeleniyor. filters: {}", filters);
+        Specification<UserEntity> spec = GenericSpecification.build(UserEntity.class, filters);
+        return userRepository.findAll(spec, pageable).map(userMapper::toResponse);
     }
 
     @Transactional

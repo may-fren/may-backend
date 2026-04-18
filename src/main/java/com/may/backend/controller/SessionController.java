@@ -7,13 +7,16 @@ import com.may.backend.service.UserSessionService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -27,17 +30,19 @@ public class SessionController {
     private final UserRepository userRepository;
 
     @GetMapping("/me")
-    public ResponseEntity<List<UserSessionResponse>> getMySessions(
+    public ResponseEntity<Page<UserSessionResponse>> getMySessions(
             @AuthenticationPrincipal UserDetails userDetails,
             HttpServletRequest request,
-            @RequestBody(required = false) Map<String, String> body) {
+            @RequestParam Map<String, String> filters,
+            @PageableDefault(size = 20) Pageable pageable) {
 
         UserEntity user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
 
-        String refreshToken = extractRefreshToken(request, body);
+        String refreshToken = extractRefreshToken(request);
         String currentHash = refreshToken != null ? userSessionService.hashToken(refreshToken) : "";
 
-        List<UserSessionResponse> sessions = userSessionService.getActiveSessions(user.getId(), currentHash);
+        Page<UserSessionResponse> sessions = userSessionService.getActiveSessions(
+                user.getId(), currentHash, new HashMap<>(filters), pageable);
         return ResponseEntity.ok(sessions);
     }
 
@@ -52,7 +57,7 @@ public class SessionController {
         return ResponseEntity.ok().build();
     }
 
-    private String extractRefreshToken(HttpServletRequest request, Map<String, String> body) {
+    private String extractRefreshToken(HttpServletRequest request) {
         if (request.getCookies() != null) {
             String fromCookie = Arrays.stream(request.getCookies())
                     .filter(c -> REFRESH_TOKEN_COOKIE.equals(c.getName()))
@@ -62,9 +67,6 @@ public class SessionController {
             if (fromCookie != null) {
                 return fromCookie;
             }
-        }
-        if (body != null && body.containsKey("refreshToken")) {
-            return body.get("refreshToken");
         }
         return null;
     }

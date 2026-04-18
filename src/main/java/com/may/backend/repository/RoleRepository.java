@@ -5,10 +5,11 @@ import com.may.backend.enums.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.Optional;
 
-public interface RoleRepository extends JpaRepository<RoleEntity, Long> {
+public interface RoleRepository extends JpaRepository<RoleEntity, Long>, JpaSpecificationExecutor<RoleEntity> {
 
     Optional<RoleEntity> findByName(String name);
 

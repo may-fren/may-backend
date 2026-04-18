@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
@@ -34,16 +36,9 @@ public class UserController {
     @GetMapping
     @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<Page<UserResponse>> getAll(
+            @RequestParam Map<String, String> filters,
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(userService.getAll(pageable));
-    }
-
-    @GetMapping("/status/{status}")
-    @PreAuthorize("hasAuthority('USER_READ')")
-    public ResponseEntity<Page<UserResponse>> getAllByStatus(
-            @PathVariable Status status,
-            @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(userService.getAllByStatus(status, pageable));
+        return ResponseEntity.ok(userService.getAll(filters, pageable));
     }
 
     @PostMapping

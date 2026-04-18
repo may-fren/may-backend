@@ -9,16 +9,18 @@ import com.may.backend.exception.BusinessException;
 import com.may.backend.exception.ErrorCode;
 import com.may.backend.mapper.TestMapper;
 import com.may.backend.repository.TestRepository;
+import com.may.backend.specification.GenericSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -36,17 +38,10 @@ public class TestService {
     }
 
     @Transactional(readOnly = true)
-    public Page<TestResponse> getAll(Pageable pageable) {
-        log.info("Testler listeleniyor.");
-        return testRepository.findAll(pageable).map(testMapper::toResponse);
-    }
-
-    @Transactional(readOnly = true)
-    public List<TestResponse> getByModuleId(Long moduleId) {
-        log.info("Modüle göre testler listeleniyor. moduleId: {}", moduleId);
-        return testRepository.findAllByModule_Id(moduleId).stream()
-                .map(testMapper::toResponse)
-                .toList();
+    public Page<TestResponse> getAll(Map<String, String> filters, Pageable pageable) {
+        log.info("Testler listeleniyor. filters: {}", filters);
+        Specification<TestEntity> spec = GenericSpecification.build(TestEntity.class, filters);
+        return testRepository.findAll(spec, pageable).map(testMapper::toResponse);
     }
 
     @Transactional

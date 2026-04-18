@@ -11,8 +11,12 @@ import com.may.backend.exception.ErrorCode;
 import com.may.backend.exception.SessionLimitException;
 import com.may.backend.mapper.UserSessionMapper;
 import com.may.backend.repository.UserSessionRepository;
+import com.may.backend.specification.GenericSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -24,6 +28,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.HexFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -146,13 +151,14 @@ public class UserSessionService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserSessionResponse> getActiveSessions(Long userId, String currentRefreshTokenHash) {
-        List<UserSessionEntity> sessions = userSessionRepository
-                .findByUserIdAndStatusOrderByLoginDateAsc(userId, SessionStatus.ACTIVE);
+    public Page<UserSessionResponse> getActiveSessions(Long userId, String currentRefreshTokenHash,
+                                                       Map<String, String> filters, Pageable pageable) {
+        filters.put("userId", userId.toString());
+        filters.put("status", SessionStatus.ACTIVE.name());
+        Specification<UserSessionEntity> spec = GenericSpecification.build(UserSessionEntity.class, filters);
 
-        return sessions.stream()
-                .map(s -> userSessionMapper.toResponse(s, s.getRefreshTokenHash().equals(currentRefreshTokenHash)))
-                .collect(Collectors.toList());
+        return userSessionRepository.findAll(spec, pageable)
+                .map(s -> userSessionMapper.toResponse(s, s.getRefreshTokenHash().equals(currentRefreshTokenHash)));
     }
 
     @Scheduled(cron = "0 0 * * * *")
